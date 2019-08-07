@@ -1,0 +1,8 @@
+/*
+!/.gitignore
+!/assets
+!/application
+/application/*
+!/application/controllers
+!/application/models
+!/application/views
