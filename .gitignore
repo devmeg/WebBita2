@@ -6,3 +6,4 @@
 !/application/controllers
 !/application/models
 !/application/views
+!/application/migrations
