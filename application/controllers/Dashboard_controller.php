@@ -1,13 +1,12 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Dashboard_controller extends CI_Controller {
-
-	public function index()
-	{
-		echo "hola";
-	}
-
+class Dashboard_controller extends CI_Controller
+{
+  public function index()
+  {
+    echo "hola";
+  }
 }
 
 /* End of file Dashboard_controller.php */
