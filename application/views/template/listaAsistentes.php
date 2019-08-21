@@ -38,9 +38,9 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <label class="control-label col-md-3">Edad</label>
+                                            <label class="control-label col-md-3">Fecha de Nacimiento</label>
                                             <div class="col-md-9">
-                                                <input type="number" min="10" name="edad" class="form-control" required>
+                                                <input type="text" name="fecha_nacimiento" class="form-control" placeholder="31-12-1990" required>
                                             </div>
                                         </div>
 
@@ -121,7 +121,7 @@
 
 					var Nombre   = $("input[name='nombreCompleto']").val();
 					var Rut      = $("input[name='rut']").val();
-					var Edad     = $("input[name='edad']").val();
+					var Fecha = $("input[name='fecha_nacimiento']").val();
 					var Club     = $("input[name='club']").val();
 					var Telefono = $("input[name='fono']").val();
 
@@ -132,7 +132,7 @@
 		                type: "post",
 		                data: { nombre:Nombre
 		                	   ,rut:Rut
-		                	   ,edad:Edad
+		                	   ,fecha_nacimiento:Fecha
 		                	   ,club:Club
 		                	   ,telefono:Telefono},
 		                beforeSend:function(){
@@ -150,7 +150,7 @@
 		                     $("#cuerpo").html(data);
 		                     $("input[name='nombreCompleto']").val("");
 							 $("input[name='rut']").val("");
-							 $("input[name='edad']").val("");
+							 $("input[name='fecha_nacimiento']").val("");
 							 $("input[name='club']").val("");
 							 $("input[name='fono']").val("");
 
