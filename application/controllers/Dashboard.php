@@ -327,7 +327,8 @@ class Dashboard extends CI_Controller {
 		$datosAsistentes = array('id_delegacion'=>$this->session->userdata('id_delegacion')
 			                    ,'nombre_completo'=> $this->input->post('nombre')
 			                    ,'rut'=>$this->input->post('rut')
-			                    ,'edad'=>$this->input->post('edad')
+			                    ,'fecha_nacimiento'=> date('Y-m-d',
+															strtotime($this->input->post('fecha_nacimiento')))
 			                    ,'club'=>$this->input->post('club')
 			                    ,'telefono'=>$this->input->post('telefono'));
 
@@ -442,7 +443,7 @@ public function C_obtenerHistorialEstados($output = 0){
 								  	<td>".$contador++."</td>
 	                    			<td>".$fila->nombre_completo."</td>
 	                    			<td>".$fila->rut."</td>
-	                    			<td>".$fila->edad."</td>
+	                    			<td>".$fila->fecha_nacimiento."</td>
 	                    			<td>".$fila->telefono."</td>
 	                    			<td>
 										
