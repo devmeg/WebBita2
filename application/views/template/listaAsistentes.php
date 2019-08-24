@@ -92,6 +92,7 @@
                                     			<th>Nombre completo</th>
                                     			<th>Rut</th>
                                     			<th>Edad</th>
+                                                <th>Club</th>
                                     			<th>Teléfono</th>
                                     			<th colspan="2">Opciones</th>
                                     		</tr>
