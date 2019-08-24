@@ -86,7 +86,9 @@ class Dashboard_model extends CI_Model
   public function M_obtenerAsistentes()
   {
     $this->db->order_by('nombre_completo', 'ASC');
-    $query = $this->db->get_where('asistentes', array('id_delegacion' => $this->session->userdata('id_delegacion')));
+    $query = $this->db
+    ->select("*, FLOOR(DATEDIFF(CURRENT_DATE, fecha_nacimiento)/365) as edad")
+    ->get_where('asistentes', array('id_delegacion' => $this->session->userdata('id_delegacion')));
 
     return $query->result();
   }

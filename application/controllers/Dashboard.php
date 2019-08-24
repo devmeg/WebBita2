@@ -450,7 +450,7 @@ class Dashboard extends CI_Controller
                     <td>".$contador++."</td>
                     <td>".$fila->nombre_completo."</td>
                     <td>".$fila->rut."</td>
-                    <td>".$fila->fecha_nacimiento."</td>
+                    <td>".$fila->edad."</td>
                     <td>".$fila->club."</td>
                     <td>".$fila->telefono."</td>
                     <td>
