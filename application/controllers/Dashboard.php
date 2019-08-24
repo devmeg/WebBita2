@@ -327,17 +327,24 @@ class Dashboard extends CI_Controller
 
   public function C_guardarAsistente()
   {
-    $datosAsistentes = array('id_delegacion'=>$this->session->userdata('id_delegacion')
-        ,'nombre_completo'=> $this->input->post('nombre')
-        ,'rut'=>$this->input->post('rut')
-        ,'fecha_nacimiento'=> date(
-          'Y-m-d',
-          strtotime($this->input->post('fecha_nacimiento'))
-        )
-        ,'club'=>$this->input->post('club')
-        ,'telefono'=>$this->input->post('telefono'));
+    $resp = 0;
 
-    $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
+    $this->load->library('validators/RutDv');
+    $this->rutdv->setValue($this->input->post('rut'));
+
+    if ($this->rutdv->validate()) {
+      $datosAsistentes = array('id_delegacion'=>$this->session->userdata('id_delegacion')
+      ,'nombre_completo'=> $this->input->post('nombre')
+      ,'rut'=>$this->rutdv->getValue()
+      ,'fecha_nacimiento'=> date(
+        'Y-m-d',
+        strtotime($this->input->post('fecha_nacimiento'))
+      )
+      ,'club'=>$this->input->post('club')
+      ,'telefono'=>$this->input->post('telefono'));
+
+      $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
+    }
 
     if ($resp == 0) {
       echo "ERROR";
