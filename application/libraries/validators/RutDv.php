@@ -27,6 +27,14 @@ class RutDv extends Rule{
     $this->isValid = false;
   }
 
+    /**
+   * @Override
+   *
+   **/
+  public function getValue() {
+    return $this->parse($this->value);
+  }
+
   public function getDv($r){
     $s=1;
     for($m=0;$r!=0;$r/=10)
@@ -38,12 +46,14 @@ class RutDv extends Rule{
     return strtoupper(preg_replace('/[^0-9kK]/', '', $value));
   }
 
-  /**
-   * @Override
-   *
-   **/
-  public function getValue() {
-    return $this->parse($this->value);
+  public static function format($value) {
+    $dv = substr($value,-1);
+    $rut = substr($value,0,-1);
+
+    $rut = substr_replace($rut,".",-6,0);
+    $rut = substr_replace($rut,".",-3,0);
+
+    return $rut."-".$dv;  
   }
 
 }

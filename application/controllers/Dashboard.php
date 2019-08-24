@@ -452,14 +452,17 @@ class Dashboard extends CI_Controller
 
   public function C_obtenerAsistentes($output = 0)
   {
+    $this->load->library("validators/rutdv");
+    
     $resp = $this->Dashboard_model->M_obtenerAsistentes();
     $tabla_Asistentes = "";
     $contador= 1;
     foreach ($resp as $fila) {
+      $rut = $this->rutdv->format($fila->rut);
       $tabla_Asistentes .= "<tr>
                     <td>".$contador++."</td>
                     <td>".$fila->nombre_completo."</td>
-                    <td>".$fila->rut."</td>
+                    <td>".$rut."</td>
                     <td>".$fila->edad."</td>
                     <td>".$fila->club."</td>
                     <td>".$fila->telefono."</td>
