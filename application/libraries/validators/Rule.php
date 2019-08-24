@@ -6,7 +6,7 @@ class Rule {
   protected $isValid = false;
 
   public function setValue($value) {
-    $this->value = $value;
+    $this->value = trim($value);
     $this->evaluate($this->value);
   }
 

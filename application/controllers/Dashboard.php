@@ -331,8 +331,10 @@ class Dashboard extends CI_Controller
 
     $this->load->library('validators/RutDv');
     $this->rutdv->setValue($this->input->post('rut'));
+    $this->load->library('validators/Telefono');
+    $this->telefono->setValue($this->input->post('telefono'));
 
-    if ($this->rutdv->validate()) {
+    if ($this->rutdv->validate()&& $this->telefono->validate() ) {
       $datosAsistentes = array('id_delegacion'=>$this->session->userdata('id_delegacion')
       ,'nombre_completo'=> $this->input->post('nombre')
       ,'rut'=>$this->rutdv->getValue()
@@ -341,7 +343,8 @@ class Dashboard extends CI_Controller
         strtotime($this->input->post('fecha_nacimiento'))
       )
       ,'club'=>$this->input->post('club')
-      ,'telefono'=>$this->input->post('telefono'));
+      ,'telefono'=>$this->telefono->getValue()
+      );
 
       $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
     }

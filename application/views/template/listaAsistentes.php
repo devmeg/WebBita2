@@ -53,7 +53,7 @@
                                         <div class="form-group row">
                                             <label class="control-label col-md-3">Teléfono</label>
                                             <div class="col-md-9">
-                                                <input type="text" name="fono" class="form-control" placeholder="+56 9 1234 5678" required>
+                                                <input type="text" name="fono" class="form-control" placeholder="9 1234 5678" required>
                                             </div>
                                         </div>
                                         
