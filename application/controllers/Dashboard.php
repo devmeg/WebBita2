@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+include_once(APPPATH.'libraries/validators/RutDv.php');
+
 class Dashboard extends CI_Controller
 {
   public function __construct()
@@ -452,13 +454,11 @@ class Dashboard extends CI_Controller
 
   public function C_obtenerAsistentes($output = 0)
   {
-    $this->load->library("validators/rutdv");
-    
     $resp = $this->Dashboard_model->M_obtenerAsistentes();
     $tabla_Asistentes = "";
     $contador= 1;
     foreach ($resp as $fila) {
-      $rut = $this->rutdv->format($fila->rut);
+      $rut = RutDv::format($fila->rut);
       $tabla_Asistentes .= "<tr>
                     <td>".$contador++."</td>
                     <td>".$fila->nombre_completo."</td>
