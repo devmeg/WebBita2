@@ -53,7 +53,7 @@
                                         <div class="form-group row">
                                             <label class="control-label col-md-3">Teléfono</label>
                                             <div class="col-md-9">
-                                                <input type="text" name="fono" class="form-control" placeholder="9 1234 5678" required>
+                                                <input type="text" id="i-fono" name="fono" class="form-control" placeholder="9 1234 5678" maxlength="9" required>
                                             </div>
                                         </div>
                                         
@@ -186,16 +186,27 @@
 		                  }
 		             });
 		            // fin ajax 
-				});
+				});		      
+		        $(document).ready(function () {
+                    (function ($) {
+                        $.fn.inputFilter = function (inputFilter) {
+                        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                            if (inputFilter(this.value)) {
+                            this.oldValue = this.value;
+                            this.oldSelectionStart = this.selectionStart;
+                            this.oldSelectionEnd = this.selectionEnd;
+                            } else if (this.hasOwnProperty("oldValue")) {
+                            this.value = this.oldValue;
+                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                            }
+                        });
+                        };
+                    })(jQuery);
 
-
-		      
-		        $(document).ready(function(){
-		        	
-		        });
-		        // Obtención de coordenadas
-		     
-				
-				
+                    // Restrict input to digits by using a regular expression filter.
+                    $("#i-fono").inputFilter(function (value) {
+                        return /^\d*$/.test(value);
+                    });
+                });		
     </script>
           
