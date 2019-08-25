@@ -2,6 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 include_once(APPPATH.'libraries/validators/RutDv.php');
+include_once(APPPATH.'libraries/validators/Telefono.php');
 
 class Dashboard extends CI_Controller
 {
@@ -459,13 +460,14 @@ class Dashboard extends CI_Controller
     $contador= 1;
     foreach ($resp as $fila) {
       $rut = RutDv::format($fila->rut);
+      $telefono = Telefono::format($fila->telefono); 
       $tabla_Asistentes .= "<tr>
                     <td>".$contador++."</td>
                     <td>".$fila->nombre_completo."</td>
                     <td>".$rut."</td>
                     <td>".$fila->edad."</td>
                     <td>".$fila->club."</td>
-                    <td>".$fila->telefono."</td>
+                    <td>".$telefono."</td>
                     <td>
             
                       <!-- <button type='button' class='btn btn-warning btn-flat btn-addon b_editar'><i class='ti-user'></i>Editar</button> -->

@@ -19,4 +19,19 @@ class Telefono extends Rule{
     $this->isValid = false;
   }
 
+  public static function format($value)
+  {
+    $codigo = substr($value,0,1);
+    
+    if ($codigo == "9") {
+      $fono = substr_replace($value," ",1,0);
+      
+
+    } else { 
+      $fono = substr_replace($value," ",2,0);
+
+    }
+    return "+56 ".$fono;
+  }
+
 }
