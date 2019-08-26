@@ -22,15 +22,15 @@
 
                                 <span id="success_message"></span>
                                 <span id="critical_message"></span>
-                                <form action="#" class="form-horizontal form-bordered">
+                                <form id="registrarAsistente" action="#" class="form-horizontal form-bordered">
                                     <div class="form-body">                                      
                                         
                                         
                                         <div class="form-group row">
                                             <label class="control-label col-md-3">Nombre Completo</label>
                                             <div class="col-md-9">
-                                                <input type="text" name="nombreCompleto" class="form-control" placeholder="Nombre completo" required>
-                                                <span id="nombreCompleto_error" class="text-danger"></span>
+                                                <input type="text" name="nombre_completo" class="form-control" placeholder="Nombre completo" required>
+                                                <span id="nombre_completo_error" class="text-danger"></span>
                                             </div>
                                         </div>
 
@@ -72,7 +72,7 @@
                                             <div class="col-md-12">
                                                 <div class="row">
                                                     <div class="offset-sm-2 col-md-9">
-                                                        <button type="button" id="registrarAsistente" class="btn btn-primary"> <i class="fa fa-check"></i> Registrar Asistente</button>
+                                                        <button type="submit" id="btnRegistrarAsistente" class="btn btn-primary"> <i class="fa fa-check"></i> Registrar Asistente</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -125,10 +125,12 @@
 			<script src="<?php echo base_url('assets/js/lib/jquery/jquery.min.js');?>"></script>
             <script type="text/javascript">
 
+                $(document).ready(function () {
 
-				$('#registrarAsistente').on('click',function(){
+				$('#registrarAsistente').on('submit',function(){
+                    event.preventDefault();
 
-					var Nombre   = $("input[name='nombreCompleto']").val();
+					var Nombre   = $("input[name='nombre_completo']").val();
 					var Rut      = $("input[name='rut']").val();
 					var Fecha = $("input[name='fecha_nacimiento']").val();
 					var Club     = $("input[name='club']").val();
@@ -138,14 +140,11 @@
 					// inicio AJAX
 		            $.ajax({
 		                url: "<?php echo base_url('index.php/Dashboard/C_guardarAsistente/'); ?>",
-		                type: "post",
-		                data: { nombre:Nombre
-		                	   ,rut:Rut
-		                	   ,fecha_nacimiento:Fecha
-		                	   ,club:Club
-		                	   ,telefono:Telefono},
+		                method:"POST",
+                        data:$(this).serialize(),
+                        dataType:"json",
 		                beforeSend:function(){
-                            $('#registrarAsistente').attr('disabled', 'disabled');
+                            $('#btnRegistrarAsistente').attr('disabled', 'disabled');
 		                    $("#cuerpo").html('<div class="row">\
 											    <div class="col-lg-1"></div>\
 											    <div class="col-lg-10">\
@@ -158,21 +157,22 @@
 		                    
                         },
                         success:function(data){
-                            console.log(data);
-                            console.log(data.nombreCompleto_error);
+                            // console.log(data);
+                            // console.log(data.nombre_completo_error);
                             if (data.success) {
                                 $('#success_message').html(data.success);
-                                $("input[name='nombreCompleto']").val("");
-                                $("input[name='rut']").val("");
-                                $("input[name='fecha_nacimiento']").val("");
-                                $("input[name='club']").val("");
-                                $("input[name='fono']").val("");
+                                $('#nombre_completo_error').html('');
+                                $('#rut_error').html('');
+                                $('#fecha_nacimiento_error').html('');
+                                $('#club_error').html('');
+                                $('#fono_error').html('');
+                                $('#registrarAsistente')[0].reset();
                             }
                             if (data.error) {
-                                if(data.nombreCompleto_error != '') {
-                                    $('#nombreCompleto_error').html(data.nombreCompleto_error);
+                                if(data.nombre_completo_error != '') {
+                                    $('#nombre_completo_error').html(data.nombre_completo_error);
                                 } else {
-                                    $('#nombreCompleto_error').html('');
+                                    $('#nombre_completo_error').html('');
                                 }
                                 if(data.rut_error != '') {
                                     $('#rut_error').html(data.rut_error);
@@ -204,7 +204,7 @@
                                 $("#cuerpo").html("");
                             }
 
-                            $('#registrarAsistente').attr('disabled', false);
+                            $('#btnRegistrarAsistente').attr('disabled', false);
 		                  }
 		             });
 		            // fin ajax 
@@ -237,7 +237,7 @@
 		             });
 		            // fin ajax 
 				});		      
-		        $(document).ready(function () {
+		        
                     (function ($) {
                         $.fn.inputFilter = function (inputFilter) {
                         return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {

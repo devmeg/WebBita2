@@ -332,15 +332,15 @@ class Dashboard extends CI_Controller
     
     $this->load->library("form_validation");
 
-    $this->form_validation->set_rules('nombreCompleto', 'Nombre Completo', 'required|min_length[3]|max_length[100]|alpha|trim');
+    $this->form_validation->set_rules('nombre_completo', 'Nombre Completo', 'required|min_length[3]|max_length[100]|alpha|trim');
     //$this->form_validation->set_rules('fecha_nacimiento', 'Fecha de Nacimiento', 'required|regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]|trim');
     $this->form_validation->set_rules('club', 'Club', 'required|min_length[3]|max_length[45]|alpha|trim');
     
     //Mensajes
     // %s es el nombre del campo que ha fallado
-    $this->form_validation->set_message('required','El campo %s es obligatorio');
-    $this->form_validation->set_message('alpha','El campo %s debe estar compuesto solo por letras');
-    $this->form_validation->set_message('min_length','El campo {field} debe tener mas de {param} caracteres');
+    $this->form_validation->set_message('required','El campo {field} es obligatorio');
+    $this->form_validation->set_message('alpha','El campo {field} debe estar compuesto solo por letras');
+    $this->form_validation->set_message('min_length','El campo {field} debe tener más de {param} caracteres');
     $this->form_validation->set_message('max_length','El campo {field} debe tener menos de {param} caracteres');
     //$this->form_validation->set_message('max_length[100]','El campo %s debe tener menos de 101 caracteres');
     //$this->form_validation->set_message('regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]','El campo %s debe tener formato dd-mm-aaaa');
@@ -349,11 +349,12 @@ class Dashboard extends CI_Controller
     $this->load->library('validators/RutDv');
     $this->rutdv->setValue($this->input->post('rut'));
     $this->load->library('validators/Telefono');
-    $this->telefono->setValue($this->input->post('telefono'));
+    $this->telefono->setValue($this->input->post('fono'));
 
-    if ($this->rutdv->validate() && $this->telefono->validate() && $this->form_validation->run()) {
+    $fValidation = $this->form_validation->run();
+    if ($this->rutdv->validate() && $this->telefono->validate() && $fValidation) {
       $datosAsistentes = ['id_delegacion'=>$this->session->userdata('id_delegacion')
-      ,'nombre_completo'=> $this->input->post('nombre')
+      ,'nombre_completo'=> $this->input->post('nombre_completo')
       ,'rut'=>$this->rutdv->getValue()
       ,'fecha_nacimiento'=> date(
         'Y-m-d',
@@ -365,21 +366,22 @@ class Dashboard extends CI_Controller
 
       $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
       if ($resp != 0){
-        $data['success'] = '<div class="alert alert-success">Se ha agregado al asistente con exito</div>';
+        $data['success'] = '<div class="alert alert-success">Se ha agregado al asistente con éxito</div>';
       } else {
-        $data['critical'] = '<div class="alert alert-danger">ERROR: ocurrio un error, no se ha ingresado el asistente</div>';
+        $data['critical'] = '<div class="alert alert-danger">ERROR: ocurrió un error, no se ha ingresado el asistente</div>';
       }
-    }
-    else {
+    } else {
       $data['error'] = true;
-      $data['nombreCompleto_error'] = form_error('nombreCompleto');
-      $data['rut_error'] = $this->rutdv->validate() ? '' : 'El Rut es invalido'; 
+      $this->form_validation->set_error_delimiters('', '');
+      $data['nombre_completo_error'] = form_error('nombre_completo');
+      $data['rut_error'] = $this->rutdv->validate() ? '' : 'El Rut es inválido'; 
       $data['fecha_nacimiento_error'] = form_error('fecha_nacimiento');
       $data['club_error'] = form_error('club');
-      $data['fono_error'] = $this->telefono->validate() ? '' : 'El telefono es invalido';
+      $data['fono_error'] = $this->telefono->validate() ? '' : 'El Teléfono es inválido';
     }
-    //$data['lista'] = $this->C_obtenerAsistentes();
-    //log_message('error',json_encode($data));
+    $data['lista'] = $this->C_obtenerAsistentes();
+    log_message('error',$this->C_obtenerAsistentes());
+    log_message('error',json_encode($data));
     echo json_encode($data);
   }
 
