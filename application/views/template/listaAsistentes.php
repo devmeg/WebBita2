@@ -18,7 +18,10 @@
                         <div class="card card-outline-info">
                             
                             <div class="card-body m-t-15">
-                            	<legend>Asistentes</legend>
+                                <legend>Asistentes</legend>
+
+                                <span id="success_message"></span>
+                                <span id="critical_message"></span>
                                 <form action="#" class="form-horizontal form-bordered">
                                     <div class="form-body">                                      
                                         
@@ -27,6 +30,7 @@
                                             <label class="control-label col-md-3">Nombre Completo</label>
                                             <div class="col-md-9">
                                                 <input type="text" name="nombreCompleto" class="form-control" placeholder="Nombre completo" required>
+                                                <span id="nombreCompleto_error" class="text-danger"></span>
                                             </div>
                                         </div>
 
@@ -34,6 +38,7 @@
                                             <label class="control-label col-md-3">RUT</label>
                                             <div class="col-md-9">
                                                 <input type="text" name="rut" class="form-control" placeholder="11111111-1" required>
+                                                <span id="rut_error" class="text-danger"></span>
                                             </div>
                                         </div>
 
@@ -41,6 +46,7 @@
                                             <label class="control-label col-md-3">Fecha de Nacimiento</label>
                                             <div class="col-md-9">
                                                 <input type="text" name="fecha_nacimiento" class="form-control" placeholder="31-12-1990" required>
+                                                <span id="fecha_nacimiento" class="text-danger"></span>
                                             </div>
                                         </div>
 
@@ -48,12 +54,14 @@
                                             <label class="control-label col-md-3">Club</label>
                                             <div class="col-md-9">
                                                 <input type="text" name="club" class="form-control" placeholder="Nombre del club" required>
+                                                <span id="club_error" class="text-danger"></span>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="control-label col-md-3">Teléfono</label>
                                             <div class="col-md-9">
                                                 <input type="text" id="i-fono" name="fono" class="form-control" placeholder="9 1234 5678" maxlength="9" required>
+                                                <span id="fono_error" class="text-danger"></span>
                                             </div>
                                         </div>
                                         
@@ -137,6 +145,7 @@
 		                	   ,club:Club
 		                	   ,telefono:Telefono},
 		                beforeSend:function(){
+                            $('#registrarAsistente').attr('disabled', 'disabled');
 		                    $("#cuerpo").html('<div class="row">\
 											    <div class="col-lg-1"></div>\
 											    <div class="col-lg-10">\
@@ -147,14 +156,53 @@
 											    </div>\
 											</div>');
 		                    
-		                },success:function(data){
-		                     $("#cuerpo").html(data);
-		                     $("input[name='nombreCompleto']").val("");
-							 $("input[name='rut']").val("");
-							 $("input[name='fecha_nacimiento']").val("");
-							 $("input[name='club']").val("");
-							 $("input[name='fono']").val("");
+                        },
+                        success:function(data){
+                            if (data.success) {
+                                $('#success_message').html(data.success);
+                                $("input[name='nombreCompleto']").val("");
+                                $("input[name='rut']").val("");
+                                $("input[name='fecha_nacimiento']").val("");
+                                $("input[name='club']").val("");
+                                $("input[name='fono']").val("");
+                            }
+                            if (data.error) {
+                                if(data.nombreCompleto_error != '') {
+                                    $('#nombreCompleto_error').html(data.nombreCompleto_error);
+                                } else {
+                                    $('#nombreCompleto_error').html('');
+                                }
+                                if(data.rut_error != '') {
+                                    $('#rut_error').html(data.rut_error);
+                                } else {
+                                    $('#rut_error').html('');
+                                }
+                                if(data.fecha_nacimiento_error != '') {
+                                    $('#fecha_nacimiento_error').html(data.fecha_nacimiento_error);
+                                } else {
+                                    $('#fecha_nacimiento_error').html('');
+                                }
+                                if(data.club_error != '') {
+                                    $('#club_error').html(data.club_error);
+                                } else {
+                                    $('#club_error').html('');
+                                }
+                                if(data.fono_error != '') {
+                                    $('#fono_error').html(data.fono_error);
+                                } else {
+                                    $('#fono_error').html('');
+                                }
+                            }
+                            if (data.critical) {
+                                $('#critical_message').html(data.critical);
+                            }
+                            if (data.data) {
+                                $("#cuerpo").html(data.data);
+                            } else {
+                                $("#cuerpo").html("");
+                            }
 
+                            $('#registrarAsistente').attr('disabled', false);
 		                  }
 		             });
 		            // fin ajax 
@@ -209,4 +257,3 @@
                     });
                 });		
     </script>
-          
