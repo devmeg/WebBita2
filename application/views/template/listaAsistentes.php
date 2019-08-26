@@ -158,6 +158,8 @@
 		                    
                         },
                         success:function(data){
+                            console.log(data);
+                            console.log(data.nombreCompleto_error);
                             if (data.success) {
                                 $('#success_message').html(data.success);
                                 $("input[name='nombreCompleto']").val("");
@@ -196,8 +198,8 @@
                             if (data.critical) {
                                 $('#critical_message').html(data.critical);
                             }
-                            if (data.data) {
-                                $("#cuerpo").html(data.data);
+                            if (data.lista) {
+                                $("#cuerpo").html(data.lista);
                             } else {
                                 $("#cuerpo").html("");
                             }
