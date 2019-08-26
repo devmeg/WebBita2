@@ -325,20 +325,34 @@ class Dashboard extends CI_Controller
     $this->load->view('template/footer');
   }
 
-
-
-
   public function C_guardarAsistente()
   {
     $resp = 0;
+    $data = [];
+    
+    $this->load->library("form_validation");
 
+    $this->form_validation->set_rules('nombreCompleto', 'Nombre Completo', 'required|min_length[3]|max_length[100]|alpha|trim');
+    $this->form_validation->set_rules('fecha_nacimiento', 'Fecha de Nacimiento', 'required|regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]|trim');
+    $this->form_validation->set_rules('club', 'Club', 'required||min_length[3]|max_length[45]|alpha|trim');
+    
+    //Mensajes
+    // %s es el nombre del campo que ha fallado
+    $this->form_validation->set_message('required','El campo %s es obligatorio');
+    $this->form_validation->set_message('alpha','El campo %s debe estar compuesto solo por letras');
+    $this->form_validation->set_message('min_length','El campo {field} debe tener mas de {param} caracteres');
+    $this->form_validation->set_message('max_length','El campo {field} debe tener menos de {param} caracteres');
+    //$this->form_validation->set_message('max_length[100]','El campo %s debe tener menos de 101 caracteres');
+    $this->form_validation->set_message('regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]','El campo %s debe tener formato dd-mm-aaaa');
+
+    //continua con el ingreso a la BD ya que las validaciones de la interfaz estan ok
     $this->load->library('validators/RutDv');
     $this->rutdv->setValue($this->input->post('rut'));
     $this->load->library('validators/Telefono');
     $this->telefono->setValue($this->input->post('telefono'));
 
-    if ($this->rutdv->validate()&& $this->telefono->validate() ) {
-      $datosAsistentes = array('id_delegacion'=>$this->session->userdata('id_delegacion')
+    if ($this->rutdv->validate() && $this->telefono->validate() && $this->form_validation->run()) {
+      $datosAsistentes = ['id_delegacion'=>$this->session->userdata('id_delegacion')
       ,'nombre_completo'=> $this->input->post('nombre')
       ,'rut'=>$this->rutdv->getValue()
       ,'fecha_nacimiento'=> date(
@@ -347,20 +361,26 @@ class Dashboard extends CI_Controller
       )
       ,'club'=>$this->input->post('club')
       ,'telefono'=>$this->telefono->getValue()
-      );
+      ];
 
       $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
+      if ($resp != 0){
+        $data['success'] = '<div class="alert alert-success">Se ha agregado al asistente con exito</div>';
+      } else {
+        $data['critical'] = '<div class="alert alert-danger">ERROR: ocurrio un error, no se ha ingresado el asistente</div>';
+      }
     }
-
-    if ($resp == 0) {
-      echo "ERROR";
-    } else {
-      echo $this->C_obtenerAsistentes(1);
+    else {
+      $data['error'] = true;
+      $data['nombreCompleto_error'] = form_error('nombreCompleto');
+      $data['rut_error'] = $this->rutdv->validate() ? null : 'El Rut es invalido'; 
+      $data['fecha_nacimiento_error'] = form_error('fecha_nacimiento');
+      $data['club_error'] = form_error('club');
+      $data['fono_error'] = $this->telefono->validate() ? null : 'El telefono es invalido';
     }
+    $data['data'] = $this->C_obtenerAsistentes(1);
+    echo json_encode($data);
   }
-
-
-
 
   public function C_obtenerEstadosViaje()
   {
@@ -427,9 +447,6 @@ class Dashboard extends CI_Controller
     }
   }
 
-  
-
-
   public function C_obtenerHistorialEstados($output = 0)
   {
     $r_estados = $this->Dashboard_model->M_obtenerHistorialEstado();
@@ -449,9 +466,6 @@ class Dashboard extends CI_Controller
       return $tabla_Historial;
     }
   }
-
-
-
 
   public function C_obtenerAsistentes($output = 0)
   {
