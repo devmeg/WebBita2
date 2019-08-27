@@ -46,7 +46,7 @@
                                             <label class="control-label col-md-3">Fecha de Nacimiento</label>
                                             <div class="col-md-9">
                                                 <input type="text" name="fecha_nacimiento" class="form-control" placeholder="31-12-1990" required>
-                                                <span id="fecha_nacimiento" class="text-danger"></span>
+                                                <span id="fecha_nacimiento_error" class="text-danger"></span>
                                             </div>
                                         </div>
 
@@ -157,7 +157,7 @@
 		                    
                         },
                         success:function(data){
-                            // console.log(data);
+                             //console.log(data);
                             // console.log(data.nombre_completo_error);
                             if (data.success) {
                                 $('#success_message').html(data.success);

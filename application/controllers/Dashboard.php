@@ -332,18 +332,18 @@ class Dashboard extends CI_Controller
     
     $this->load->library("form_validation");
 
-    $this->form_validation->set_rules('nombre_completo', 'Nombre Completo', 'required|min_length[3]|max_length[100]|alpha|trim');
-    //$this->form_validation->set_rules('fecha_nacimiento', 'Fecha de Nacimiento', 'required|regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]|trim');
-    $this->form_validation->set_rules('club', 'Club', 'required|min_length[3]|max_length[45]|alpha|trim');
+    $this->form_validation->set_rules('nombre_completo', 'Nombre Completo', 'required|trim|min_length[3]|max_length[100]|alpha_numeric_spaces');
+    $this->form_validation->set_rules('fecha_nacimiento', 'Fecha de Nacimiento', 'required|trim|callback_fecha');
+    $this->form_validation->set_rules('club', 'Club', 'required|trim|min_length[3]|max_length[45]|alpha_numeric_spaces');
     
     //Mensajes
     // %s es el nombre del campo que ha fallado
     $this->form_validation->set_message('required','El campo {field} es obligatorio');
-    $this->form_validation->set_message('alpha','El campo {field} debe estar compuesto solo por letras');
+    $this->form_validation->set_message('alpha_numeric_spaces','El campo {field} debe ser alfanumérico');
+    //$this->form_validation->set_message('xss_clean','El campo {field} contiene caracteres no admitidos');
     $this->form_validation->set_message('min_length','El campo {field} debe tener más de {param} caracteres');
     $this->form_validation->set_message('max_length','El campo {field} debe tener menos de {param} caracteres');
-    //$this->form_validation->set_message('max_length[100]','El campo %s debe tener menos de 101 caracteres');
-    //$this->form_validation->set_message('regex_match[(0[1-9]|1[0-9]|2[0-9]|3(0|1))-(0[1-9]|1[0-2])-\d{4}]','El campo %s debe tener formato dd-mm-aaaa');
+    $this->form_validation->set_message('fecha','El formato del campo {field} es Inválido');
 
     //continua con el ingreso a la BD ya que las validaciones de la interfaz estan ok
     $this->load->library('validators/RutDv');
@@ -380,9 +380,21 @@ class Dashboard extends CI_Controller
       $data['fono_error'] = $this->telefono->validate() ? '' : 'El Teléfono es inválido';
     }
     $data['lista'] = $this->C_obtenerAsistentes();
-    log_message('error',$this->C_obtenerAsistentes());
-    log_message('error',json_encode($data));
+    //log_message('error',$this->C_obtenerAsistentes());
+    //log_message('error',json_encode($data));
     echo json_encode($data);
+  }
+
+  function fecha($date){
+    $this_year = date('Y');
+
+    $day = (int) substr($date, 0, 2);
+    $month = (int) substr($date, 3, 2);
+    $year = (int) substr($date, 6, 4);
+    if ($year > $this_year - 1 || $year < 1000){
+      return false;
+    }
+    return checkdate($month, $day, $year);
   }
 
   public function C_obtenerEstadosViaje()
