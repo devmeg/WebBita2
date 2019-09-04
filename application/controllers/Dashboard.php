@@ -498,11 +498,8 @@ class Dashboard extends CI_Controller
                     <td>".$fila->club."</td>
                     <td>".$telefono."</td>
                     <td>
-            
-                      <!-- <button type='button' class='btn btn-warning btn-flat btn-addon b_editar'><i class='ti-user'></i>Editar</button> -->
-                    </td>
-                    <td>
-                      
+                      <button type='button' value='".$fila->id_asistente."' class='btn btn-warning btn-flat btn-addon b_editar'><i class='ti-user'></i>Editar</button>
+
                       <button type='button' value='".$fila->id_asistente."' class='btn btn-danger btn-flat btn-addon b_borrar'><i class='fa fa-times' aria-hidden='true'></i>Borrar</button>
                     </td>
                   </tr>";
@@ -572,7 +569,10 @@ class Dashboard extends CI_Controller
       echo $this->C_obtenerAsistentes(1);
     }
   }
-}
 
-/* End of file Dashboard_controller.php */
+  public function C_editAsistente($id) {
+    $response = $this->dashboard_model->M_getAsistente($id);
+    echo json_encode($response);
+  }
+} /* End of file Dashboard_controller.php */
 /* Location: ./application/controllers/Dashboard_controller.php */
