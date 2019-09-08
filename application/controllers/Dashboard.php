@@ -325,7 +325,7 @@ class Dashboard extends CI_Controller
     $this->load->view('template/footer');
   }
 
-  public function C_guardarAsistente()
+  public function C_guardarAsistente($id=null)
   {
     $resp = 0;
     $data = [];
@@ -353,20 +353,28 @@ class Dashboard extends CI_Controller
 
     $fValidation = $this->form_validation->run();
     if ($this->rutdv->validate() && $this->telefono->validate() && $fValidation) {
-      $datosAsistentes = ['id_delegacion'=>$this->session->userdata('id_delegacion')
-      ,'nombre_completo'=> $this->input->post('nombre_completo')
-      ,'rut'=>$this->rutdv->getValue()
-      ,'fecha_nacimiento'=> date(
-        'Y-m-d',
-        strtotime($this->input->post('fecha_nacimiento'))
-      )
-      ,'club'=>$this->input->post('club')
-      ,'telefono'=>$this->telefono->getValue()
+      $datosAsistentes = [
+        'id_delegacion'=>$this->session->userdata('id_delegacion')
+        ,'nombre_completo'=> $this->input->post('nombre_completo')
+        ,'rut'=>$this->rutdv->getValue()
+        ,'fecha_nacimiento'=> date(
+          'Y-m-d',
+          strtotime($this->input->post('fecha_nacimiento'))
+        )
+        ,'club'=>$this->input->post('club')
+        ,'telefono'=>$this->telefono->getValue()
       ];
-
-      $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
+      if (!empty($id)) {
+        $resp = $this->Dashboard_model->M_updateAsistente($id, $datosAsistentes);
+      } else {
+        $resp = $this->Dashboard_model->M_guardarAsistente($datosAsistentes);
+      }
       if ($resp != 0){
-        $data['success'] = '<div class="alert alert-success">Se ha agregado al asistente con éxito</div>';
+        if (!empty($id)) {
+          $data['success'] = '<div class="alert alert-success">Se han guardado los datos con éxito</div>';
+        } else {
+          $data['success'] = '<div class="alert alert-success">Se ha agregado al asistente con éxito</div>';
+        }
       } else {
         $data['critical'] = '<div class="alert alert-danger">ERROR: ocurrió un error, no se ha ingresado el asistente</div>';
       }
@@ -498,7 +506,7 @@ class Dashboard extends CI_Controller
                     <td>".$fila->club."</td>
                     <td>".$telefono."</td>
                     <td>
-                      <button type='button' value='".$fila->id_asistente."' class='btn btn-warning btn-flat btn-addon b_editar'><i class='ti-user'></i>Editar</button>
+                      <button type='button' value='".$fila->id_asistente."' class='btn btn-warning btn-flat btn-addon b_editar'><i class='fa fa-edit'></i>Editar</button>
 
                       <button type='button' value='".$fila->id_asistente."' class='btn btn-danger btn-flat btn-addon b_borrar'><i class='fa fa-times' aria-hidden='true'></i>Borrar</button>
                     </td>
@@ -572,7 +580,15 @@ class Dashboard extends CI_Controller
 
   public function C_editAsistente($id) {
     $response['asistente'] = $this->Dashboard_model->M_getAsistente($id);
-    $response['error'] = empty($response['asistente']) ? 1 : 0;
+    if (empty($response['asistente'])) {
+      $response['error'] = 1;
+    } else {
+      $response['error'] = 0;
+      $fecha_nacimiento = $response['asistente']->fecha_nacimiento;
+      $fecha_nacimiento = explode("-", $fecha_nacimiento);
+      $response['asistente']->fecha_nacimiento = 
+        $fecha_nacimiento[2]."-".$fecha_nacimiento[1]."-".$fecha_nacimiento[0];
+    }
     echo json_encode($response);
   }
 } /* End of file Dashboard_controller.php */

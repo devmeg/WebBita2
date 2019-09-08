@@ -25,6 +25,15 @@ class Dashboard_model extends CI_Model
     return $this->db->affected_rows();
   }
 
+  public function M_updateAsistente($id, $datosAsistentes)
+  {
+
+    $this->db->where('id_asistente', $id);
+    $this->db->update('asistentes', $datosAsistentes);
+
+    return $this->db->affected_rows();
+  }
+
   public function M_getAsistente($id) {
     $query = $this->db->get_where('asistentes', ['id_asistente' => $id]);
     return $query->row();

@@ -71,8 +71,15 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="offset-sm-2 col-md-9">
+                                            <div class="offset-sm-3 col-md-9">
                                                 <button type="submit" id="btnRegistrarAsistente" class="btn btn-primary"> <i class="fa fa-check"></i> Registrar Asistente</button>
+                                                <button type="submit" id="btnGuardar" class="btn btn-primary"
+                                                style="display: none;">
+                                                    <i class="fa fa-save"></i>Guardar
+                                                </button>
+                                                <button type="reset" id="btnNuevoAsistente" class="btn btn-success" style="display: none;">
+                                                    <i class="fa fa-user-plus"></i>Nuevo Asistente
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -124,9 +131,10 @@
 
 <script src="<?php echo base_url('assets/js/lib/jquery/jquery.min.js');?>"></script>
 <script type="text/javascript">
+
 $(document).ready(function () {
 
-    $('.b_editar').on('click', function() {
+    var b_editarOnCLick = function() {
         var id = $(this).val();
 
         $.ajax({
@@ -145,6 +153,10 @@ $(document).ready(function () {
                         >ERROR: no se ha podido recuperar los datos.</div>`
                     );
                 } else {
+                    $('#btnRegistrarAsistente').hide();
+                    $('#registrarAsistente').attr('update', id);
+                    $('#btnGuardar').show();
+                    $('#btnNuevoAsistente').show();
                     var asistente = response.asistente;
                     $("input[name='nombre_completo']").val(asistente.nombre_completo);
                     $("input[name='rut']").val(asistente.rut);
@@ -154,26 +166,60 @@ $(document).ready(function () {
                 }
             }
         });
+    };
+
+    $('.b_editar').on('click', b_editarOnCLick);
+
+    $('#btnNuevoAsistente').on('click', function() {
+        clearForm();
+        $('#registrarAsistente').removeAttr('update');
+        $('#btnRegistrarAsistente').show();
+        $('#btnGuardar').hide();
+        $('#btnNuevoAsistente').hide();
     });
+
+    function disableButtons() {
+        $('#btnRegistrarAsistente').attr('disabled', 'disabled');
+        $('#btnGuardar').attr('disabled', 'disabled');
+        $('#btnNuevoAsistente').attr('disabled', 'disabled');
+    }
+
+    function enableButtons() {
+        $('#btnRegistrarAsistente').attr('disabled', false);
+        $('#btnGuardar').attr('disabled', false);
+        $('#btnNuevoAsistente').attr('disabled', false);
+    }
+
+    function clearForm() {
+        $('#success_message').html('');
+        $('#critical_message').html('');
+        $('#nombre_completo_error').html('');
+        $('#rut_error').html('');
+        $('#fecha_nacimiento_error').html('');
+        $('#club_error').html('');
+        $('#fono_error').html('');
+        $('#registrarAsistente')[0].reset();
+    }
 
     $('#registrarAsistente').on('submit',function(){
         event.preventDefault();
 
-        var Nombre   = $("input[name='nombre_completo']").val();
-        var Rut      = $("input[name='rut']").val();
-        var Fecha = $("input[name='fecha_nacimiento']").val();
-        var Club     = $("input[name='club']").val();
-        var Telefono = $("input[name='fono']").val();
+        if ($(this).hasAttr('update')) {
+            var ajaxUrl = "<?php echo base_url('index.php/Dashboard/C_guardarAsistente/'); ?>"
+                        + $(this).attr('update');
+        } else {
+            var ajaxUrl = "<?php echo base_url('index.php/Dashboard/C_guardarAsistente/'); ?>";
+        }
 
 
         // inicio AJAX
         $.ajax({
-            url: "<?php echo base_url('index.php/Dashboard/C_guardarAsistente/'); ?>",
+            url: ajaxUrl,
             method:"POST",
             data:$(this).serialize(),
             dataType:"json",
             beforeSend:function(){
-                $('#btnRegistrarAsistente').attr('disabled', 'disabled');
+                disableButtons();
                 $("#cuerpo").html('<div class="row">\
                                     <div class="col-lg-1"></div>\
                                     <div class="col-lg-10">\
@@ -189,13 +235,7 @@ $(document).ready(function () {
                 //console.log(data);
                 // console.log(data.nombre_completo_error);
                 if (data.success) {
-                    $('#success_message').html(data.success);
-                    $('#nombre_completo_error').html('');
-                    $('#rut_error').html('');
-                    $('#fecha_nacimiento_error').html('');
-                    $('#club_error').html('');
-                    $('#fono_error').html('');
-                    $('#registrarAsistente')[0].reset();
+                    $( "#btnNuevoAsistente" ).trigger( "click" );
                 }
                 if (data.error) {
                     if(data.nombre_completo_error != '') {
@@ -233,8 +273,10 @@ $(document).ready(function () {
                     $("#cuerpo").html("");
                 }
 
-                $('#btnRegistrarAsistente').attr('disabled', false);
+                enableButtons();
             }
+        }).done(function(data) {
+            $('.b_editar').on('click', b_editarOnCLick);
         });
         // fin ajax 
     });
@@ -267,16 +309,20 @@ $(document).ready(function () {
     
     (function ($) {
         $.fn.inputFilter = function (inputFilter) {
-        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
-            if (inputFilter(this.value)) {
-            this.oldValue = this.value;
-            this.oldSelectionStart = this.selectionStart;
-            this.oldSelectionEnd = this.selectionEnd;
-            } else if (this.hasOwnProperty("oldValue")) {
-            this.value = this.oldValue;
-            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-            }
-        });
+            return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                }
+            });
+        };
+
+        $.fn.hasAttr = function(name) {  
+            return (typeof this.attr(name) !== 'undefined' && this.attr(name) !== false);
         };
     })(jQuery);
 
