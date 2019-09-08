@@ -27,7 +27,7 @@ class Dashboard_model extends CI_Model
 
   public function M_getAsistente($id) {
     $query = $this->db->get_where('asistentes', ['id_asistente' => $id]);
-    return $query->result();
+    return $query->row();
   }
 
   public function M_obtenerHitos($id_delegacion = 0)

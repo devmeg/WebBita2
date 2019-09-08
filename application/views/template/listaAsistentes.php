@@ -126,6 +126,36 @@
 <script type="text/javascript">
 $(document).ready(function () {
 
+    $('.b_editar').on('click', function() {
+        var id = $(this).val();
+
+        $.ajax({
+            url: "<?php echo base_url('index.php/Dashboard/C_editAsistente/'); ?>" + id,
+            type: "get",
+            dataType:"json",
+            beforeSend: function() {
+                $(this).attr('disabled', 'disabled');
+            },
+            success: function(response) {
+                // console.log(response.asistente);
+                $(this).attr('disabled', false);
+                if (response.error) {
+                    $('#success_message').html(
+                        `<div class="alert alert-danger"
+                        >ERROR: no se ha podido recuperar los datos.</div>`
+                    );
+                } else {
+                    var asistente = response.asistente;
+                    $("input[name='nombre_completo']").val(asistente.nombre_completo);
+                    $("input[name='rut']").val(asistente.rut);
+                    $("input[name='fecha_nacimiento']").val(asistente.fecha_nacimiento);
+                    $("input[name='club']").val(asistente.club);
+                    $("input[name='fono']").val(asistente.telefono);
+                }
+            }
+        });
+    });
+
     $('#registrarAsistente').on('submit',function(){
         event.preventDefault();
 
@@ -230,8 +260,8 @@ $(document).ready(function () {
                 $("#cuerpo").html("");
                 $("#cuerpo").append($(data));
 
-                }
-            });
+            }
+        });
         // fin ajax 
     });
     

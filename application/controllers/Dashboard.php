@@ -571,7 +571,8 @@ class Dashboard extends CI_Controller
   }
 
   public function C_editAsistente($id) {
-    $response = $this->dashboard_model->M_getAsistente($id);
+    $response['asistente'] = $this->Dashboard_model->M_getAsistente($id);
+    $response['error'] = empty($response['asistente']) ? 1 : 0;
     echo json_encode($response);
   }
 } /* End of file Dashboard_controller.php */
