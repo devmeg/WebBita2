@@ -275,8 +275,6 @@ $(document).ready(function () {
 
                 enableButtons();
             }
-        }).done(function(data) {
-            $('.b_editar').on('click', b_editarOnCLick);
         });
         // fin ajax 
     });
@@ -329,6 +327,10 @@ $(document).ready(function () {
     // Restrict input to digits by using a regular expression filter.
     $("#i-fono").inputFilter(function (value) {
         return /^\d*$/.test(value);
+    });
+
+    $( document ).ajaxComplete(function( event, request, settings ) {
+        $('.b_editar').on('click', b_editarOnCLick);
     });
 });
 </script>
